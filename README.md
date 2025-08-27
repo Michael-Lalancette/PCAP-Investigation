@@ -17,10 +17,18 @@ Chaque cas inclut des notes détaillées, des indicateurs de compromission (IOCs
 - **Kali Linux** - Distribution Linux spécialisée pour l'analyse forensique
 - **Wireshark** – Inspection détaillée des PCAPs
 - **VirusTotal** – Vérification de réputation de fichiers/URLs
+- **Python / Bash / PowerShell** – Automatisation et scripts d’investigation  
 
+---
 
 ### 📂 Index des cas étudiés
-1. [MTA-quiz-jan2023](GitHub/PCAP-Investigation/MTA-quiz-jan2023) – Analyse d’un trafic réseau infecté par le malware *OriginLogger (Agent Tesla)*
+1. [MTA Quiz – Janvier 2023](MTA/MTA-quiz-jan2023/notes.md) – Analyse d’un trafic réseau infecté par le malware *OriginLogger (Agent Tesla)*
 
 
 *(La liste sera mise à jour au fur et à mesure que je progresse à travers les exercices)*
+
+---
+
+### 📌 Parcourir ce dépôt
+- Chaque dossier de cas contient `notes.md` avec méthodologie et résultats détaillés.  
+- Les scripts utilisés pour automatiser l’analyse ou enrichir les données se trouvent dans le sous-dossier `scripts/` lorsque nécessaire.  
