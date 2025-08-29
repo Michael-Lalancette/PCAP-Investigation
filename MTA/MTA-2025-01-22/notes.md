@@ -14,9 +14,10 @@
 
 ### 🧰 Outils utilisés
 
-- Wireshark
-- Kali Linux
-- VMware
+- [Wireshark](https://www.wireshark.org/download.html)
+- [Kali Linux](https://www.kali.org/)
+- [VMware](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
+- [VirusTotal](https://www.virustotal.com/gui/home/upload)
 
 ---
 
@@ -120,35 +121,90 @@
 #### Q5. What is the likely domain name for the fake Google Authenticator page?
 <details>
     <summary>💡 Étapes</summary>
+    
+- Étape 1 : Appliquer un filtre pour isoler les requêtes DNS émises par l’hôte 10.1.17.215.
+  
+  `ip.src == 10.1.17.215 && (dns && dns.flags.response == 0) && dns.qry.name matches "(auth|google|authenticator)"`
+  
+      ⚠️ dns.flags.response == 0 pour ne filtrer que les DNS queries initiées par le client.
+- Étape 2 : Repérer le ou les domaines suspects qui imitent Google Authenticator.
 
-  - Étape 1 : xxx
-</details>
+      ⚠️ Un domaine avec une faute de frappe évidente (ex. double "o") est généralement un signe de domaine malicieux.
 
+- Étape 3 : Vérifier les réponses DNS pour obtenir les adresses IPv4 résolues par ces domaines.
+    
+    `(dns.qry.name == google-authenticator.burleson-appliance.net || dns.qry.name == authenticatoor.org) && dns.flags.response == 1 && dns.qry.type == 1`
+
+      ⚠️ dns.flags.response == 1 capture uniquement les réponses (!= client).
+      ⚠️ dns.qry.type == 1 limite aux enregistrements A (== IPv4).
+  
+- Étape 4 : Vérifier la réputation des domaines/IP suspects via [VirusTotal](https://www.virustotal.com/gui/home/upload).
+
+
+
+</details>  
 
 <details>
   <summary>✅ Réponse</summary>
   
-`xxx`
+`google-authenticator.burleson-appliance.net`
+
+`authenticatoor.org`
 </details>
 
 <details>
   <summary>📷 Captures</summary>
-<img src="images/q5.png" alt="q5" width="800"/>
+<img src="images/q5a.png" alt="q5a" width="800"/>
+<img src="images/q5b.png" alt="q5b" width="800"/>
+<img src="images/q5c.png" alt="q5c" width="800"/>
+<img src="images/q5d.png" alt="q5d" width="800"/>
+<img src="images/q5e.png" alt="q5e" width="800"/>
+<img src="images/q5f.png" alt="q5f" width="800"/>
+<img src="images/q5g.png" alt="q5g" width="800"/>
+<img src="images/q5h.png" alt="q5h" width="800"/>
+<img src="images/q5i.png" alt="q5i" width="800"/>
+<img src="images/q5j.png" alt="q5j" width="800"/>
+<img src="images/q5k.png" alt="q5k" width="800"/>
+</details>
+
+
+<details>
+  <summary>🔗 Liens VirusTotal</summary>
+    
+[google-authenticator.burleson-appliance[.]net](https://www.virustotal.com/gui/domain/google-authenticator.burleson-appliance.net)
+
+[authenticatoor[.]org](https://www.virustotal.com/gui/domain/authenticatoor.org)
+
+[104.21.64[.]1](https://www.virustotal.com/gui/ip-address/104.21.64.1)
+
+[82.221.136[.]26](https://www.virustotal.com/gui/ip-address/82.221.136.26)
+
 </details>
 
 
 ---
 
 
+#### Q6. What are the IP addresses used for C2 servers for this infection?
+<details>
+    <summary>💡 Étapes</summary>
+
+  - Étape 1 : Filtrer les paquets Kerberos provenant de la machine infectée.
+      - Filtre = `ip.src == 10.1.17.215 and kerberos.CNameString`
+  - Étape 2 : Inspecter le champ `CNameString` dans le panneau *Packet Details* pour relever le nom d’utilisateur.
+</details>
 
 
-LAN SEGMENT DETAILS FROM THE PCAP
-LAN segment range:  10.1.17[.]0/24   (10.1.17[.]0 through 10.1.17[.]255)
-Domain:  bluemoontuesday[.]com
-Active Directory (AD) domain controller:  10.1.17[.]2 - WIN-GSH54QLW48D
-AD environment name:  BLUEMOONTUESDAY
-LAN segment gateway:  10.1.17[.]1
-LAN segment broadcast address:  10.1.17[.]255
+<details>
+  <summary>✅ Réponse</summary>
+  
+`shutchenson`
+</details>
+
+<details>
+  <summary>📷 Captures</summary>
+<img src="images/q6.png" alt="q6" width="800"/>
+</details>
 
 
-What are the IP addresses used for C2 servers for this infection?
+---
