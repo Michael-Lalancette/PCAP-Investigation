@@ -30,7 +30,8 @@
   - Étape 1 : Ouvrir le PCAP (via terminal ou fichier directement)
 
   - Étape 2 : Filtrer le fichier avec le Basic filter pour trouver la première requête HTTP suspecte
-      - Basic filter = `(http.request or tls.handshake == 1) and !(ssdp)`
+
+        (http.request or tls.handshake == 1) and !(ssdp)
 </details>
 
 
@@ -53,7 +54,8 @@
     <summary>💡 Étapes</summary>
 
   - Étape 1 : Filtrer le fichier avec le Basic filter pour trouver la première requête HTTP suspecte
-      - Basic filter = `(http.request or tls.handshake == 1) and !(ssdp)`
+
+        (http.request or tls.handshake == 1) and !(ssdp)
 </details>
 
 
@@ -76,7 +78,8 @@
     <summary>💡 Étapes</summary>
 
   - Étape 1 : Dans certains PCAPs, tu peux retrouver le nom d’hôte Windows de la victime grâce au trafic **NBNS ou SMB/SMB2**. Utiliser le filtre approprié.
-      - Filtre = `nbns or smb or smb2`
+
+        nbns or smb or smb2
 </details>
 
 
@@ -99,7 +102,9 @@
     <summary>💡 Étapes</summary>
 
   - Étape 1 : Filtrer les paquets Kerberos provenant de la machine infectée.
-      - Filtre = `ip.src == 10.1.17.215 and kerberos.CNameString`
+  
+          ip.src == 10.1.17.215 and kerberos.CNameString
+    
   - Étape 2 : Inspecter le champ `CNameString` dans le panneau *Packet Details* pour relever le nom d’utilisateur.
 </details>
 
@@ -124,7 +129,7 @@
     
 - Étape 1 : Appliquer un filtre pour isoler les requêtes DNS émises par l’hôte 10.1.17.215.
   
-  `ip.src == 10.1.17.215 && (dns && dns.flags.response == 0) && dns.qry.name matches "(auth|google|authenticator)"`
+      ip.src == 10.1.17.215 && (dns && dns.flags.response == 0) && dns.qry.name matches "(auth|google|authenticator)"
   
       ⚠️ dns.flags.response == 0 pour ne filtrer que les DNS queries initiées par le client.
 - Étape 2 : Repérer le ou les domaines suspects qui imitent Google Authenticator.
@@ -133,7 +138,7 @@
 
 - Étape 3 : Vérifier les réponses DNS pour obtenir les adresses IPv4 résolues par ces domaines.
     
-    `(dns.qry.name == google-authenticator.burleson-appliance.net || dns.qry.name == authenticatoor.org) && dns.flags.response == 1 && dns.qry.type == 1`
+        (dns.qry.name == google-authenticator.burleson-appliance.net || dns.qry.name == authenticatoor.org) && dns.flags.response == 1 && dns.qry.type == 1
 
       ⚠️ dns.flags.response == 1 capture uniquement les réponses (!= client).
       ⚠️ dns.qry.type == 1 limite aux enregistrements A (== IPv4).
@@ -189,22 +194,63 @@
 <details>
     <summary>💡 Étapes</summary>
 
-  - Étape 1 : Filtrer les paquets Kerberos provenant de la machine infectée.
-      - Filtre = `ip.src == 10.1.17.215 and kerberos.CNameString`
-  - Étape 2 : Inspecter le champ `CNameString` dans le panneau *Packet Details* pour relever le nom d’utilisateur.
+  - Étape 1 : Appliquer un filtre pour identifier tous les adresses IP sortants de l’hôte infecté.
+
+        ip.src == 10.1.17.215 && (http.request or tls.handshake == 1 or (tcp.flags.syn == 1 && tcp.flags.ack == 0)) && !(ssdp) && ip.dst != 10.1.17.0/24
+        
+  - Étape 2 : Filtrer les adresses IP internes/légitimes
+    
+          ⚠️ Trafic vers réseau interne (10.1.17.0/24)
+          ⚠️ Services connus comme Microsoft, Google, Edge, etc.
+
+  - Étape 3 : Vérifier la réputation des adresses IP suspects via [VirusTotal](https://www.virustotal.com/gui/home/upload).
 </details>
 
 
 <details>
   <summary>✅ Réponse</summary>
   
-`shutchenson`
+`5.252.153[.]241`
+
+`45.125.66[.]32`
+
+`45.125.66[.]252`
+
 </details>
 
 <details>
   <summary>📷 Captures</summary>
-<img src="images/q6.png" alt="q6" width="800"/>
+<img src="images/q6a.png" alt="q6a" width="800"/>
+<img src="images/q6b.png" alt="q6b" width="800"/>
+<img src="images/q6c.png" alt="q6c" width="800"/>
+</details>
+
+<details>
+  <summary>🔗 Liens VirusTotal</summary>
+
+[5.252.153[.]241](https://www.virustotal.com/gui/ip-address/5.252.153.241)
+
+[45.125.66[.]32](https://www.virustotal.com/gui/ip-address/45.125.66.32)
+
+[45.125.66[.]252](https://www.virustotal.com/gui/ip-address/45.125.66.252)
+
 </details>
 
 
 ---
+
+### 🕵️‍♂️ RAPPORT
+
+Résumé...
+
+Comportements observés...
+
+IOCs...
+
+TTPs...
+
+
+
+
+
+
