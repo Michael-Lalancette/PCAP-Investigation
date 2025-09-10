@@ -348,13 +348,6 @@ $XiGbBTVOcETNtwj = ('qrTLBVPRRAHmqrTLBVPyBTeXqrTLBVPvJTdeqrTLBVPPDQbxSu' -split 
 $bPJnndNVDE = $xtZaRGRfwoDKOIahvtc + $IDdoQNfyQZT + $XiGbBTVOcETNtwj
 $iMomIPCvExLjuGt = 'N$0$Z$W$'.replace('$', '')
 $aMCdlKxvWQWiMMrpeNo = '0uR'
-$msNRjJFmsMhGoY = $iMomIPCvExLjuGt + $aMCdlKxvWQWiMMrpeNo
-$VJDojDmCsLH = 'G>l>h>Z>'.replace('>', '')
-$jJIgFRcpeRTQy = $VJDojDmCsLH
-$EnWYnyGvsLIru = '25vc3'
-$eqBMcYdMsVINSfPI = 'R*p*Y*'.replace('*', '')
-$yvpQqviAJjIhvSec = $EnWYnyGvsLIru + $eqBMcYdMsVINSfPI
-$UfqlNesTeHGhLSEt = '3;M;7;C;'.replace(';', '')
 
 ```
 
@@ -370,15 +363,15 @@ $UfqlNesTeHGhLSEt = '3;M;7;C;'.replace(';', '')
 
 - Le fichier `[TeamViewer[.]exe]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e `
-- Type : Win32 EXE (4.18MB)
-- Community score :
+- Type : Win32 EXE file
+- Community score : flagged 0 sur 72 == probablement clean (ou non reconnu)
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e/details)
 
 ---
 
 - Le fichier `[TeamViewer_Resource[.]dll]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192 `
-- Type : Win32 DLL file (653.29KB)
+- Type : Win32 DLL file
 - Community score : flagged 0 sur 72 == probablement clean (ou non reconnu)
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192/details)
 
@@ -386,7 +379,7 @@ $UfqlNesTeHGhLSEt = '3;M;7;C;'.replace(';', '')
 
 - Le fichier `[TV[.]txt]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7`
-- Type : Win32 DLL file (12,62KB)
+- Type : Win32 DLL file
 - Community score : flagged par 44 sur 72 == probablement malveillant
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7/details)
 
@@ -394,7 +387,7 @@ $UfqlNesTeHGhLSEt = '3;M;7;C;'.replace(';', '')
 
 - Le fichier `pas[.]ps1` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e`
-- Type : TXT file (1513 bytes)
+- Type : TXT file
 - Community score : flagged par 24 sur 60 == probablement malveillant
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e/details)
 
