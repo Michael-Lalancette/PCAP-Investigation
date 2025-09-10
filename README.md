@@ -13,11 +13,12 @@ Chaque cas inclut des notes détaillées, des indicateurs de compromission (IOCs
 ---
 
 ### 🧰 Outils utilisés
-- **VMware Workstation Pro** - Environnement isolé
-- **Kali Linux** - Distribution Linux spécialisée pour l'analyse forensique
-- **Wireshark** – Inspection détaillée des PCAPs
-- **VirusTotal** – Vérification de réputation de fichiers/URLs
-- **Python / Bash / PowerShell** – Automatisation et scripts d’investigation  
+- **[VMware Workstation Pro](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)** - Environnement isolé
+- **[Kali Linux](https://www.kali.org/)** - Distribution Linux spécialisée pour l'analyse forensique
+- **[Wireshark](https://www.wireshark.org/download.html)** – Inspection détaillée des PCAPs
+- **[VirusTotal](https://www.virustotal.com/gui/home/url)** – Vérification de réputation de fichiers/URLs
+- **[MITRE ATT&CK Framework](https://attack.mitre.org/)** - Base de connaissance qui documente les tactiques, techniques et procédures (TTPs) observées lors d'incident de cybersécurité réels.
+
 
 ---
 
@@ -32,4 +33,3 @@ Chaque cas inclut des notes détaillées, des indicateurs de compromission (IOCs
 
 ### 📌 Parcourir ce dépôt
 - Chaque dossier de cas contient `notes.md` avec méthodologie et résultats détaillés.  
-- Les scripts utilisés pour automatiser l’analyse ou enrichir les données se trouvent dans le sous-dossier `scripts/` lorsque nécessaire.  
