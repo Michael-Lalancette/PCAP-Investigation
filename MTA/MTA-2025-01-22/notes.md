@@ -21,6 +21,7 @@
 - [VMware](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
 - [VirusTotal](https://www.virustotal.com/gui/home/upload)
 - [MITRE ATT&CK](https://attack.mitre.org/)
+- [CyberChef](https://gchq.github.io/CyberChef/)
 
 ---
 
@@ -331,40 +332,69 @@ Create-Shortcut $startupFilePath $shortcutPath
 
 4️⃣ PowerShell furtif (`skqllz.ps1`)
 
-- Script dissimulé avec des variables aléatoires, concaténations et remplacement de caractères.
-- Décodage Base64 pour générer le script principal.
+- Décodage Base64 pour générer le script principal ([CyberChef](https://gchq.github.io/CyberChef/) pour décodage)
+  - Script dissimulé avec des variables aléatoires, concaténations et remplacement de caractères.
+```
+$NOtpWmSIdODGSpZw = 'dXNpb'
+$AwoVYrdnaRqwQwIR = ('PjbXUKllmrzPjbXUKmcgU' -split 'PjbXUK')[2]
+$bipxzxdxTeWltRuZETo = $NOtpWmSIdODGSpZw + $AwoVYrdnaRqwQwIR
+$AkEiJsIqpXZniGUAcwgi = '3lzdG'
+$GQXMEUFkfQKNrHz = $AkEiJsIqpXZniGUAcwgi
+$lNcnDkYznZYNGS = 'V}t}O}w}p}'.replace('}', '')
+$roSPFHOnzUB = $lNcnDkYznZYNGS
+$xtZaRGRfwoDKOIahvtc = '1&c&2&'.replace('&', '')
+$IDdoQNfyQZT = 'luZ'
+$XiGbBTVOcETNtwj = ('qrTLBVPRRAHmqrTLBVPyBTeXqrTLBVPvJTdeqrTLBVPPDQbxSu' -split 'qrTLBVP')[2]
+$bPJnndNVDE = $xtZaRGRfwoDKOIahvtc + $IDdoQNfyQZT + $XiGbBTVOcETNtwj
+$iMomIPCvExLjuGt = 'N$0$Z$W$'.replace('$', '')
+$aMCdlKxvWQWiMMrpeNo = '0uR'
+$msNRjJFmsMhGoY = $iMomIPCvExLjuGt + $aMCdlKxvWQWiMMrpeNo
+$VJDojDmCsLH = 'G>l>h>Z>'.replace('>', '')
+$jJIgFRcpeRTQy = $VJDojDmCsLH
+$EnWYnyGvsLIru = '25vc3'
+$eqBMcYdMsVINSfPI = 'R*p*Y*'.replace('*', '')
+$yvpQqviAJjIhvSec = $EnWYnyGvsLIru + $eqBMcYdMsVINSfPI
+$UfqlNesTeHGhLSEt = '3;M;7;C;'.replace(';', '')
+
+```
+
 - Exécution en arrière-plan via `Start-Process`.
 - Envoi régulier de logs au serveur C2 avec la fonction `Send-Log`.
 
+
+
+
 5️⃣ Investigation des fichiers dans [VirusTotal](https://www.virustotal.com/gui/home/url)
 
-- Le fichier `[.]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
-- SHA-256 : ``
-- Type : 
+<img src="images/export.png" alt="export" width="800"/>
+
+- Le fichier `[TeamViewer[.]exe]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- SHA-256 : `904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e `
+- Type : Win32 EXE (4.18MB)
 - Community score :
-- [Lien VirusTotal]
+- [Lien VirusTotal](https://www.virustotal.com/gui/file/904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e/details)
 
---
+---
 
-- Le fichier `[.]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
-- SHA-256 : ``
-- Type : 
-- Community score :
-- [Lien VirusTotal]
+- Le fichier `[TeamViewer_Resource[.]dll]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- SHA-256 : `9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192 `
+- Type : Win32 DLL file (653.29KB)
+- Community score : flagged 0 sur 72 == probablement clean (ou non reconnu)
+- [Lien VirusTotal](https://www.virustotal.com/gui/file/9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192/details)
 
---
+---
 
-- Le fichier `[.]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
-- SHA-256 : ``
-- Type : 
-- Community score :
-- [Lien VirusTotal]
+- Le fichier `[TV[.]txt]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- SHA-256 : `3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7`
+- Type : Win32 DLL file (12,62KB)
+- Community score : flagged par 44 sur 72 == probablement malveillant
+- [Lien VirusTotal](https://www.virustotal.com/gui/file/3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7/details)
 
---
+---
 
 - Le fichier `pas[.]ps1` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e`
-- Type : text type, ASCII text, with very long lines (1513 bytes), with CRLF line terminators
+- Type : TXT file (1513 bytes)
 - Community score : flagged par 24 sur 60 == probablement malveillant
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e/details)
 
