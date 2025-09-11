@@ -85,90 +85,104 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 
 ---
 
-### 📝 Méthodologie 
+### 📝 Méthodologie
 <details>
-  
-#### 💡 LOCAL IPs
 
-Examiner le trafic web suspect en filtrant les requêtes HTTP et les tentatives de handshakes TLS. 
+#### 💡 IP local
 
-Utilisons le filtre suivant :
-`(http.request or tls.handshake.type eq 1) and !(ssdp)`
+Examiner le trafic web suspect en filtrant les requêtes HTTP et les handshakes TLS.  
 
-Résultats : 
-- IP source : `10.0.0[.]149`
-- Adresse MAC : `00:21:5d:9e:42:fb`
+`(http.request or tls.handshake.type == 1) and !(ssdp)`
+
+➡️ IP source : `10.0.0[.]149`  
+➡️ Adresse MAC : `00:21:5d:9e:42:fb`
 
 <img src="images/1.png" alt="1" width="800"/>
 
-
 ---
 
-#### 💡 HOST NAMES
+#### 💡 Hosts
 
-Pour identifier le nom NetBIOS et le nom d'hôte WIndows de la machine compromise, il est recommandé d'analyser les protocoles de partage de fichiers.
+Identifier le nom NetBIOS et le nom d'hôte Windows en analysant les protocoles de partage. 
 
-Utilisons le filtre suivant :
 `nbns or smb or smb2`
 
-Résultats : 
-- Host name : `DESKTOP-E7FHJS4`
-  
+➡️ **Host name** : `DESKTOP-E7FHJS4`
+
 <img src="images/2.png" alt="2" width="800"/>
 
+Examiner le trafic d'authentification Kerberos pour identifier l’utilisateur :  
 
-Ensuite, il est possible d’examiner le trafic d’authentification Kerberos afin d’identifier le nom de l’utilisateur.
+`kerberos.CNameString && ip.src == 10.0.0.149`  
+- 📝 **N.B.** : Ajout de `CNameString` en colonne pour faciliter l’identification.
 
-Utilisons le filtre suivant (N.B. que j'ai appliqué le CNameString en colonne pour mieux trouver l'information) :
-`kerberos.CNameString && ip.src == 10.0.0.149`
-
-Résultats : 
-- Utilisateur : `damon.bauer`
+➡️ **Utilisateur** : `damon.bauer`
 
 <img src="images/3.png" alt="3" width="800"/>
 
 ---
 
-#### 💡 HTTP (80)
+#### 💡 Trafic HTTP
 
-Après avoir collecté les détails de la victime, trouver quand/où/comment le trafic malveillant a commencé en analysant le trafic HTTP non chiffré sur le port 80.
+Analyser le trafic HTTP non chiffré pour identifier l'origine de l’infection : 
 
-Utilisons le filtre suivant :
 `http && ip.src == 10.0.0.149`
 
-Résultats : 
-
-Ce filtre retourne uniquement 2 entrées :
-- La première entrée est un HTTP GET vers une adresse IP externe, ce qui est suspect et nécessite une investigation approfondie.
-- La seconde entrée correspond à un HTTP GET vers `cacerts.digicert.com`, une requête typique générée par le système d’exploitation ou lors d’une navigation normale.
+➡️ HTTP GET suspect vers une IP externe `128.254.207[.]55` → **investigation**  
+➡️ HTTP GET vers `cacerts.digicert.com` → trafic légitime généré par OS/navigation normale
 
 <img src="images/4.png" alt="4" width="800"/>
 
-Suivre le TCP Stream pour la requête suspecte vers `128.254.207[.]55` pour le fichier `86607[.]dat`.
+**Suivre le TCP Stream pour la requête suspecte** vers `128.254.207[.]55` pour le fichier `86607[.]dat` :  
 
-Résultats : 
-- Request Headers minimaux (typique d'un téléchargement automatisé par un malware) - header contient `CURL`, indiquant un outil de téléchargement automatisé.
-- Fichier exécutable (DLL ou .exe) - présence de la signature `MZ` et `This program cannot be run in DOS mode` confirment qu'il s'agit d'un exécutable Windows.
+➡️ Headers minimalistes, présence de `CURL` → téléchargement automatisé  
+➡️ Fichier exécutable (`MZ` + `This program cannot be run in DOS mod`)  
 
 <img src="images/5.png" alt="5" width="800"/>
 
-Exporter le fichier suspect depuis le PCAP
+**Exporter le fichier depuis le PCAP** : `File → Export Objects → HTTP`  
 
-`File → Export Objects → HTTP`
+Après téléchargement :   
+✅ Vérification type de fichier : `file 86607.dat` == DLL Windows  
+✅ Hash SHA256 : `shasum -a 256 86607.dat`  
+✅ [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details) : détecté par plusieurs fournisseurs
 
-Après le téléchargement du fichier :
-- Il est analysé dans le terminal à l’aide de la commande file `86607.dat`, permettant de confirmer qu’il s’agit d’une DLL Windows.
-- Le hash SHA256 est ensuite calculé avec la commande `shasum -a 256 86607.dat` afin d’être soumis à VirusTotal pour identification.
-- L’analyse du hash SHA256 sur [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details) suggère que le fichier est détecté comme malveillant par plusieurs fournisseurs de sécurité.
-
-<img src="images/6.png" alt="6" width="800"/>
-
+<img src="images/6.png" alt="6" width="800"/>  
 <img src="images/7.png" alt="7" width="800"/>
 
+---
 
+#### 💡 Trafic Post-Infection
+
+Analyser le trafic HTTPS suspect après l’infection. 
+
+**Filtrer le trafic HTTPS sans nom de domaine**  
+`tls.handshake.type == 1 and tls.handshake.extension.type != 0`  
+- 📝 **N.B.** : Les connexions directes vers une IP sont rares et souvent utilisées par des malwares (Qakbot, Trickbot, Emotet).
+  
+➡️ Identifier les sessions suspectes.
+
+**Lister les endpoints IPv4** : `Statistics → Endpoints`  
+
+➡️ Repérer les adresses IP externes contactées par l’hôte infecté.
+
+**Vérifier les certificats TLS**  
+`tls.handshake.type == 11 and ip.addr == <IP_C2>`  
+
+➡️ Examiner `rdnSequence` :  
+  - Valeurs aléatoires → typique de Qakbot  
+  - Domaine usurpé (`vipsauna[.]com`) → certificat auto-signé C2
+
+**Corréler avec les ports et services suspects**  
+- **Ports/Services** : TCP 65400, SMTP, VNC, Cobalt Strike  
+
+➡️ Confirmer la combinaison d’activités post-infection
 
 </details>
 
+
+
+---
 
 
 
