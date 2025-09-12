@@ -90,7 +90,7 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 ### 💡 IP local
 <details>
   
-Examiner le trafic web suspect en filtrant les requêtes HTTP et les handshakes TLS.  
+Examiner le trafic web suspect en filtrant les requêtes HTTP et les handshakes TLS :    
 
 `(http.request or tls.handshake.type == 1) and !(ssdp)`
 
@@ -106,7 +106,7 @@ Examiner le trafic web suspect en filtrant les requêtes HTTP et les handshakes 
 ### 💡 Hosts
 <details>
 
-Identifier le nom NetBIOS et le nom d'hôte Windows en analysant les protocoles de partage. 
+Identifier le nom NetBIOS et le nom d'hôte Windows en analysant les protocoles de partage :  
 
 `nbns or smb or smb2`
 
@@ -142,8 +142,8 @@ Analyser le trafic HTTP non chiffré pour identifier l'origine de l’infection 
 <img src="images/4.png" alt="4" width="800"/>
 
 Suivre le **TCP Stream** pour la requête suspecte vers `128.254.207[.]55` pour le fichier `86607[.]dat` :    
-➡️ Headers minimalistes, présence de `CURL` → téléchargement automatisé  
-➡️ Fichier exécutable (`MZ` + `This program cannot be run in DOS mod`)  
+➡️ Headers minimalistes, présence de `CURL` → téléchargement automatisé = 🚩   
+➡️ Fichier exécutable (`MZ` + `This program cannot be run in DOS mod`) = 🚩    
 
 <img src="images/5.png" alt="5" width="800"/>
 
@@ -152,9 +152,9 @@ Suivre le **TCP Stream** pour la requête suspecte vers `128.254.207[.]55` pour 
 Exporter le fichier depuis le PCAP : `File → Export Objects → HTTP`  
 
 Après téléchargement :     
-✅ Vérification type de fichier : `file 86607.dat` == DLL Windows  
-✅ Hash SHA256 : `shasum -a 256 86607.dat`  
-✅ [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details) : détecté par plusieurs fournisseurs
+✅ Vérification type de fichier : `file 86607.dat`  
+✅ Hash SHA256 : `shasum -a 256 86607.dat`   
+✅ [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details) : détecté par plusieurs fournisseurs  
 
 <img src="images/6.png" alt="6" width="800"/>  
 <img src="images/7.png" alt="7" width="800"/>
@@ -171,8 +171,6 @@ Filtrer le trafic HTTPS sans nom de domaine :
 `tls.handshake.type == 1 and tls.handshake.extension.type != 0`  
 - 📝 N.B. : Les connexions directes vers une IP sont rares et souvent utilisées par des malwares (Qakbot, Trickbot, Emotet).
   
----
-#### Trafic C2
 Lister les endpoints IPv4 : `Statistics → Endpoints`  
 
 - Repérer les adresses IP externes des serveurs C2 contactées par l’hôte infecté `10.0.0[.]149`.  
@@ -219,7 +217,7 @@ Lorsqu'on suit le TCP Stream, on trouve rapidement les informations de l'hôte i
 Filtrer le trafic `SMTP` pour détecter l'activité de **Spambot** :  
 `smtp && ip.src == 10.0.0.149`  
 
-➡️ L’hôte infecté contacte plusieurs serveurs mail publics == suspect dans un environnement AD.
+➡️ L’hôte infecté contacte plusieurs serveurs de messagerie publics, ce qui est suspect dans un environnement AD.
 
 <img src="images/13.png" alt="13" width="800"/>
 
@@ -239,7 +237,6 @@ Pour voir l'ensemble du trafic (unencrypted ET encrypted) :
 <img src="images/15.png" alt="15" width="800"/>
 <img src="images/16.png" alt="16" width="800"/>
 
-Verdict :  
 ✅ L’hôte infecté tente d’envoyer des emails en masse  
 ✅ Confirme une activité spambot post-infection  
 ✅ Permet d’identifier la portée de l’infection et les serveurs ciblés  
