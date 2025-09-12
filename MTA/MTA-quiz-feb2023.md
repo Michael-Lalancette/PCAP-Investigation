@@ -298,11 +298,20 @@ Analyse des transferts SMB pour identifier les fichiers suspects : `File → Exp
 <img src="images/23.png" alt="23" width="800"/>
 
 
-SMB2
+#### SMB2
+Le trafic **SMB2** montre la création et le transfert de DLLs malveillants vers le DC via **NTLMSSP**. Les noms de fichiers aléatoires et l’authentification avec l’utilisateur compromis indiquent une tentative de **mouvement latéral** et d’installation de **Qakbot** dans l’AD.  
+`ip.addr == 10.0.0[.]149 && ip.dst == 10.0.0[.]6 && smb2`
 
+➡️ Le poste infecté (`10.0.0[.]149`) envoie des fichiers suspects (`.dll` et `.cfg`) au DC (`10.0.0[.]6`)  
+➡️ Le malware utilise **NTLMSSP** pour s'authentifier avec le DC en usurpant l’identité de l’utilisateur compromis (`damon.bauer`)  
 
+<img src="images/24.png" alt="24" width="800"/>
 
 </details>
+
+Pour une analyse détaillée des TTPs associées à Qakbot :
+[MITRE ATT&CK](https://mitre-attack.github.io/attack-navigator//#layerURL=https%3A%2F%2Fattack.mitre.org%2Fsoftware%2FS0650%2FS0650-enterprise-layer.json)
+
 
 </details>
 
