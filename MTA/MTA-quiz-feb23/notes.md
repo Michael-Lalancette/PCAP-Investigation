@@ -9,7 +9,7 @@
 ## 📌 Contexte
 
 - La capture réseau simule une infection par le malware Qakbot dans un environnement Active Directory (AD).
-- Le domaine cible est `WORK4US.ORG`, avec un contrôleur de domaine identifié à l’adresse IP `10.0.0.6`.
+- Le domaine cible est `WORK4US.ORG`, avec un contrôleur de domaine (DC) identifié à l’adresse IP `10.0.0.6`.
 - Tâche de fournir un rapport d'incident pour documenter l'infection.
 
 ### Données spécifiques du LAN :
