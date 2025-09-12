@@ -23,8 +23,9 @@ Chaque cas inclut des notes détaillées, des indicateurs de compromission (IOCs
 ---
 
 ### 📂 Index des cas étudiés
-1. [MTA Quiz – Janvier 2023](MTA/MTA-quiz-jan2023/notes.md) – Analyse du trafic réseau infecté par le malware *OriginLogger (Agent Tesla)*
-2. [MTA - Download from fake software site](MTA/MTA-2025-01-22/notes.md) - Analyse du trafic réseau suite au téléchargement d'un fichier malveillant *(Google Authenticator)*
+1. [MTA Quiz – Janvier 2023](MTA/MTA-quiz-jan2023/notes.md) – Analyse du trafic réseau infecté par le malware OriginLogger (Agent Tesla)
+2. [MTA - Download from fake software site](MTA/MTA-2025-01-22/notes.md) - Analyse du trafic réseau suite au téléchargement d'un fichier malveillant (Google Authenticator)
+3. [MTA Quiz - Février 2023](MTA/MTA-quiz-feb23/notes.md) - Analyse du trafic réseau infecté par le malware Qakbot dans un environnement Active Directory (AD)
 
 
 *(La liste sera mise à jour au fur et à mesure que je progresse à travers les exercices)*
