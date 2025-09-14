@@ -419,7 +419,7 @@ $aMCdlKxvWQWiMMrpeNo = '0uR'
 
 1. **Isolation** : déconnecter le poste pour stopper toute propagation.
 2. **Blocage des IP malveillantes** : filtrer les adresses C2 sur le pare-feu et la passerelle.
-3. **Analyse forensique** : identifier tous les fichiers et scripts malveillants sur le poste et le réseau.
+3. **Analyse forensique** : procéder à l’examen complet du poste affecté et du réseau afin d’identifier tous les fichiers, scripts et artefacts malveillants.
 4. **Audit des logs** : détecter toute activité suspecte supplémentaire.
 5. **Renforcement des défenses** : mettre à jour antivirus, solutions EDR et restrictions PowerShell.
 6. **Sensibilisation des utilisateurs** : rappeler les bonnes pratiques pour éviter les téléchargements depuis des sources non fiables.
