@@ -12,7 +12,23 @@
 - Le domaine cible est `WORK4US.ORG`, avec un contrôleur de domaine (DC) identifié à l’adresse IP `10.0.0.6`.
 - Tâche de fournir un rapport d'incident pour documenter l'infection.
 
-#### Données spécifiques du LAN :
+
+---
+
+## 📑 Sommaire
+
+1. 📌 [Résumé](#resume)
+2. 🖥️ [Détails de la victime](#details-de-la-victime)
+3. 🚨 [Indicateurs de compromission (IoCs)](#indicateurs-de-compromission-iocs)
+4. ☣️ [Détails du Malware](#details-du-malware)
+5. 🛡️ [Actions correctives recommandées](#actions-correctives-recommandees)
+6. 🔹 [Conclusion](#conclusion)
+7. 📝 [Méthodologie](#methodologie)
+
+
+---
+
+### Données spécifiques du LAN :
 - LAN : `10.0.0[.]0/24`
 - Domain : `WORK4US[.]org`
 - Domain Controller IP : `10.0.0[.]6`
@@ -33,16 +49,16 @@
 
 ---
 
-## 🕵️‍♂️ Rapport d'incident
+## 🕵️‍♂️ Rapport d'incident - Infection Qakbot
 <details>
   
-### 📌 Résumé
+### 📌 Résumé  <a name="resume"></a>
 
 Le 2023-02-03 à 17:04 UTC, un poste Windows appartenant à `Damon Bauer` a été compromis par un malware **Qakbot** (aussi connu sous Qbot/Pinkslipbot) dans un environnement **Active Directory** (AD).
 
 L’infection a généré du **trafic malveillant**, instauré une **backdoor** et initié des **communications** avec plusieurs serveurs C2 externes.
 
-Des indices suggèrent une **propagation** possible vers le contrôleur de domaine (`10.0.0.6`), augmentant significativement le risque pour l'ensemble du domaine `WORK4US.ORG`.
+Des indices suggèrent une **propagation** possible vers le contrôleur de domaine (`10.0.0.6`), augmentant le risque pour l'ensemble du domaine `WORK4US.ORG`.
 
 <img src="images/killchain.png" alt="killchain" width="800"/>
 
@@ -50,7 +66,7 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 
 ---
 
-### 🖥️ Détails de la victime
+### 🖥️ Détails de la victime <a name="details-de-la-victime"></a>
 
 - Utilisateur : `damon.bauer`
 - Host : `DESKTOP-E7FHJS4`
@@ -58,20 +74,21 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 - Adresse MAC : `00:21:5d:9e:42:fb`
 
 ---
-### 🚨 Indicateurs de compromission (IoCs)
 
-- Port 80 → `hxxp://128.254.207[.]55/86607.dat`
-- `102.156.32[.]143:443` — HTTPS/SSL/TLS
-- `208.187.122[.]74:443` — HTTPS/SSL/TLS
-- `5.75.205[.]43:443` — HTTPS/SSL/TLS
-- `23.111.114[.]52:65400` — TCP traffic
-- `78.31.67[.]7:443` — TCP traffic (activité VNC)
-- Diverses adresses IP sur ports TCP **25** et **465** — **SMTP** vers plusieurs serveurs de messagerie
-- **ARP scanning** depuis l’hôte infecté
-- **Transfert SMB** entre l’hôte compromis et le contrôleur de domaine
+### 🚨 Indicateurs de compromission (IoCs) <a name="indicateurs-de-compromission-iocs"></a>
 
-### ☣️ Détails du Malware :
+| 🔹 Type | 📌 Détail | 📝 Description / Remarques |
+|---------|----------|----------------------------|
+| **💾 Téléchargement initial** | `hxxp://128.254.207[.]55/86607.dat` (port 80) | **DLL Qakbot** téléchargée automatiquement, point d’entrée de l’infection |
+| **🌐 C2 (HTTPS)** | `102.156.32[.]143:443`, `208.187.122[.]74:443`, `5.75.205[.]43:443` | Communication chiffrée avec **serveurs C2 externes** |
+| **🌐 C2 (TCP)** | `23.111.114[.]52:65400` | Flux TCP pour **exfiltration de données** et contrôle à distance |
+| **🖥️ Contrôle à distance (VNC)** | `78.31.67[.]7:443` | Connexion VNC **pour prendre le contrôle de l’hôte infecté** |
+| **📧 Spam / SMTP** | Diverses IP sur ports TCP 25 et 465 | Tentatives d’**envoi massif d’emails** depuis l’hôte infecté |
+| **🔍 Reconnaissance réseau** | ARP scanning depuis `10.0.0[.]149` | Découverte d’autres machines sur le LAN, préparation du **mouvement latéral** |
+| **📂 Mouvement latéral / SMB** | Transferts SMB vers `10.0.0[.]6` (DC) | Déploiement de DLLs malveillants sur le **contrôleur de domaine**, tentative de compromission AD |
 
+
+### ☣️ Détails du Malware <a name="details-du-malware"></a>
 - SHA 256 : `713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432`
 - Type : DLL 32-bit
 - Taille : 1,761,280 bytes
@@ -80,11 +97,55 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 - Sample disponible sur [MalwareBazaar](https://bazaar.abuse.ch/sample/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/)
 - Community Score de 55 / 72 sur [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details)
 
+## 🕵️ MITRE ATT&CK Mapping :   
+Pour une analyse détaillée des TTPs associées à Qakbot :
+[MITRE ATT&CK](https://mitre-attack.github.io/attack-navigator//#layerURL=https%3A%2F%2Fattack.mitre.org%2Fsoftware%2FS0650%2FS0650-enterprise-layer.json)
+
+
+### 🛡️ Actions correctives recommandées <a name="actions-correctives-recommandees"></a>
+1️⃣ Containment (Confinement)  
+- Isoler immédiatement le poste infecté (`10.0.0[.]149`) du réseau.  
+- Bloquer les communications sortantes vers les IP C2 identifiées (voir [IoCs](#-indicateurs de compromission-iocs)):
+  
+`128.254.207[.]55`, `102.156.32[.]143`, `208.187.122[.]74`, `5.75.205[.]43`, `23.111.114[.]52`, `78.31.67[.]7`  
+- Restreindre les privilèges de l’utilisateur compromis (`damon.bauer`) jusqu’à investigation complète.  
+
+2️⃣ Eradication  
+- Supprimer toutes les DLLs malveillantes et fichiers `.cfg` transférés via SMB/SMB2.  
+- Réinitialiser les mots de passe AD de l’utilisateur compromis et des comptes administrateurs éventuellement affectés.  
+- Scanner tous les postes du LAN (`10.0.0[.]0/24`) avec un antivirus/EDR mis à jour pour détecter Qakbot.  
+
+3️⃣ Recovery (Récupération)  
+- Restaurer les fichiers critiques du DC depuis des sauvegardes fiables si nécessaire.  
+- Vérifier l’intégrité des services AD et de la réplication des contrôleurs de domaine.  
+
+4️⃣ Prévention / Durcissement  
+- Mettre à jour tous les OS/logiciels.
+- Déployer une solution EDR capable de détecter et bloquer les comportements Qakbot.
+- Former les utilisateurs sur les attaques par phishing, principale porte d’entrée de Qakbot.
+- Restreindre les connexions SMB externes et activer le logging détaillé pour détecter tout mouvement latéral.
+
+---
+
+
+### 🔹 Conclusion <a name="conclusion"></a>
+
+| 🔹 Élément | 📊 Impact / Observations |
+|------------|-------------------------|
+| Postes compromis | 1 hôte identifié (`10.0.0[.]149`) |
+| Serveurs touchés | Tentative de compromission DC (`10.0.0[.]6`) |
+| Activité malveillante | Téléchargement Qakbot, C2 HTTPS/TCP, VNC, spambot, ARP scanning, SMB lateral movement |
+| Risque pour le domaine | Élevé – propagation possible et contrôle AD potentiel |
+
+- L’infection par Qakbot a démontré une capacité à se propager dans l’AD.  
+- Les mesures de confinement, d’éradication et de prévention doivent être appliquées **immédiatement** pour limiter l’impact sur `WORK4US.ORG`.
+
+
 </details>
 
 ---
 
-## 📝 Méthodologie
+## 📝 Méthodologie  <a name="methodologie"></a>
 <details>
 
 ### 💡 IP local
@@ -106,7 +167,7 @@ Examiner le trafic web suspect en filtrant les requêtes HTTP et les handshakes 
 ### 💡 Hosts
 <details>
 
-Identifier le nom NetBIOS et le nom d'hôte Windows en analysant les protocoles de partage :  
+Identifier le nom NetBIOS et hôte Windows :    
 
 `nbns or smb or smb2`
 
@@ -116,7 +177,7 @@ Identifier le nom NetBIOS et le nom d'hôte Windows en analysant les protocoles 
 
 ---
 
-Examiner le trafic d'authentification Kerberos pour identifier l’utilisateur :  
+Examiner le trafic Kerberos pour identifier l’utilisateur :  
 
 `kerberos.CNameString && ip.src == 10.0.0.149`  
 - 📝 N.B. : Ajout de `CNameString` en colonne pour faciliter l’identification.
@@ -306,12 +367,8 @@ Le trafic **SMB2** montre la création et le transfert de DLLs malveillants vers
 
 </details>
 
-Pour une analyse détaillée des TTPs associées à Qakbot :
-[MITRE ATT&CK](https://mitre-attack.github.io/attack-navigator//#layerURL=https%3A%2F%2Fattack.mitre.org%2Fsoftware%2FS0650%2FS0650-enterprise-layer.json)
-
 
 </details>
-
 
 
 ---
