@@ -50,7 +50,6 @@
 ---
 
 ## 🕵️‍♂️ Rapport d'incident - Infection Qakbot
-<details>
   
 ### 📌 Résumé  <a name="resume"></a>
 
@@ -87,6 +86,7 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 | **🔍 Reconnaissance réseau** | ARP scanning depuis `10.0.0[.]149` | Découverte d’autres machines sur le LAN, préparation du **mouvement latéral** |
 | **📂 Mouvement latéral / SMB** | Transferts SMB vers `10.0.0[.]6` (DC) | Déploiement de DLLs malveillants sur le **contrôleur de domaine**, tentative de compromission AD |
 
+---
 
 ### ☣️ Détails du Malware <a name="details-du-malware"></a>
 - SHA 256 : `713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432`
@@ -97,10 +97,13 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 - Sample disponible sur [MalwareBazaar](https://bazaar.abuse.ch/sample/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/)
 - Community Score de 55 / 72 sur [VirusTotal](https://www.virustotal.com/gui/file/713207d9d9875ec88d2f3a53377bf8c2d620147a4199eb183c13a7e957056432/details)
 
+---
+
 ## 🕵️ MITRE ATT&CK Mapping :   
 Pour une analyse détaillée des TTPs associées à Qakbot :
 [MITRE ATT&CK](https://mitre-attack.github.io/attack-navigator//#layerURL=https%3A%2F%2Fattack.mitre.org%2Fsoftware%2FS0650%2FS0650-enterprise-layer.json)
 
+---
 
 ### 🛡️ Actions correctives recommandées <a name="actions-correctives-recommandees"></a>
 1️⃣ Containment (Confinement)  
@@ -140,8 +143,6 @@ Pour une analyse détaillée des TTPs associées à Qakbot :
 - L’infection par Qakbot a démontré une capacité à se propager dans l’AD.  
 - Les mesures de confinement, d’éradication et de prévention doivent être appliquées **immédiatement** pour limiter l’impact sur `WORK4US.ORG`.
 
-
-</details>
 
 ---
 
