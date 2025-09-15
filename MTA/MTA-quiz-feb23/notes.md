@@ -6,29 +6,14 @@
 
 ---
 
-## 📌 Contexte
-
+## 📌 Contexte  
 - La capture réseau simule une infection par le malware Qakbot dans un environnement Active Directory (AD).
 - Le domaine cible est `WORK4US.ORG`, avec un contrôleur de domaine (DC) identifié à l’adresse IP `10.0.0.6`.
-- Tâche de fournir un rapport d'incident pour documenter l'infection.
-
-
----
-
-## 📑 Sommaire
-
-1. 📌 [Résumé](#resume)
-2. 🖥️ [Détails de la victime](#details-de-la-victime)
-3. 🚨 [Indicateurs de compromission (IoCs)](#indicateurs-de-compromission-iocs)
-4. ☣️ [Détails du Malware](#details-du-malware)
-5. 🛡️ [Actions correctives recommandées](#actions-correctives-recommandees)
-6. 🔹 [Conclusion](#conclusion)
-7. 📝 [Méthodologie](#methodologie)
-
+- Mandat : fournir un rapport d'incident pour documenter l'infection.
 
 ---
 
-### Données spécifiques du LAN :
+### Données spécifiques du LAN :  
 - LAN : `10.0.0[.]0/24`
 - Domain : `WORK4US[.]org`
 - Domain Controller IP : `10.0.0[.]6`
@@ -36,11 +21,22 @@
 - LAN Gateway : `10.0.0[.]1`
 - LAN Broadcast : `10.0.0[.]255`
 
+---
+
+## 📑 Sommaire  
+1. 📌 [Résumé](#resume)
+2. 🖥️ [Détails de la victime](#details-de-la-victime)
+3. 🚨 [Indicateurs de compromission (IoCs)](#indicateurs-de-compromission-iocs)
+4. ☣️ [Détails du Malware](#details-du-malware)
+5. 🕵️‍♂️ [MITRE ATT&CK Mapping](#mitre)
+6. 🛡️ [Actions correctives recommandées](#actions)
+7. 🔹 [Conclusion](#conclusion)
+8. 📝 [Méthodologie](#methodologie)
+
 
 ---
 
-## 🧰 Outils utilisés
-
+## 🧰 Outils utilisés  
 - [Wireshark](https://www.wireshark.org/download.html)
 - [Kali Linux](https://www.kali.org/)
 - [VMware](https://www.vmware.com/products/desktop-hypervisor/workstation-and-fusion)
@@ -53,7 +49,7 @@
   
 ### 📌 Résumé  <a name="resume"></a>
 
-Le 2023-02-03 à 17:04 UTC, un poste Windows appartenant à `Damon Bauer` a été compromis par un malware **Qakbot** (aussi connu sous Qbot/Pinkslipbot) dans un environnement **Active Directory** (AD).
+Le 2023-02-03 à 17:04 UTC, un poste Windows appartenant à `damon.bauer` a été compromis par un malware **Qakbot** (aussi connu sous Qbot/Pinkslipbot) dans un environnement **Active Directory** (AD).
 
 L’infection a généré du **trafic malveillant**, instauré une **backdoor** et initié des **communications** avec plusieurs serveurs C2 externes.
 
@@ -78,13 +74,13 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 
 | 🔹 Type | 📌 Détail | 📝 Description / Remarques |
 |---------|----------|----------------------------|
-| **💾 Téléchargement initial** | `hxxp://128.254.207[.]55/86607.dat` (port 80) | **DLL Qakbot** téléchargée automatiquement, point d’entrée de l’infection |
-| **🌐 C2 (HTTPS)** | `102.156.32[.]143:443`, `208.187.122[.]74:443`, `5.75.205[.]43:443` | Communication chiffrée avec **serveurs C2 externes** |
+| **💾 Téléchargement initial** | `hxxp://128.254.207[.]55/86607.dat` (port 80) | **DLL Qakbot** téléchargée automatiquement, point d’entrée de l’infection (HTTP) |
+| **🌐 C2 (TLS/SSL)** | `102.156.32[.]143:443`, `208.187.122[.]74:443`, `5.75.205[.]43:443` | Communication chiffrée avec **serveurs C2 externes** (TLS/SSL sur TCP 443) |
 | **🌐 C2 (TCP)** | `23.111.114[.]52:65400` | Flux TCP pour **exfiltration de données** et contrôle à distance |
 | **🖥️ Contrôle à distance (VNC)** | `78.31.67[.]7:443` | Connexion VNC **pour prendre le contrôle de l’hôte infecté** |
-| **📧 Spam / SMTP** | Diverses IP sur ports TCP 25 et 465 | Tentatives d’**envoi massif d’emails** depuis l’hôte infecté |
-| **🔍 Reconnaissance réseau** | ARP scanning depuis `10.0.0[.]149` | Découverte d’autres machines sur le LAN, préparation du **mouvement latéral** |
-| **📂 Mouvement latéral / SMB** | Transferts SMB vers `10.0.0[.]6` (DC) | Déploiement de DLLs malveillants sur le **contrôleur de domaine**, tentative de compromission AD |
+| **📧 Spam/SMTP** | Diverses IP sur ports TCP 25 et 465 | Tentatives d’**envoi massif d’emails** depuis l’hôte infecté (SMTP/SMTPS) |
+| **🔍 Reconnaissance** | ARP scanning depuis `10.0.0[.]149` | Découverte d’autres machines sur le LAN, préparation du **mouvement latéral** |
+| **📂 Mouvement latéral/SMB** | Transferts SMB vers `10.0.0[.]6` (DC) | Déploiement de DLLs malveillants sur le **contrôleur de domaine**, tentative de compromission AD (SMB/SMB2)|
 
 ---
 
@@ -99,14 +95,26 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 
 ---
 
-## 🕵️ MITRE ATT&CK Mapping :   
-Pour une analyse détaillée des TTPs associées à Qakbot :
+### 🕵️‍♂️ MITRE ATT&CK Mapping <a name="mitre"></a>
+
+| 🏷️ Tactique | 🛠️ Technique | 🔹 TTP Observé | MITRE ID |
+|-------------|--------------|----------------|-----------|
+| Accès initial | Hameçonnage (Phishing) | Qakbot livré via email malveillant avec pièce jointe ZIP, lien ou image intégrée | [T1566.001](https://attack.mitre.org/techniques/T1566/001/), [T1566.002](https://attack.mitre.org/techniques/T1566/002/) |
+| Exécution | Exécution par l’utilisateur / Proxy Execution | L’ouverture d’un fichier LNK déclenche l’exécution de la DLL Qakbot via `rundll32.exe` | [T1204.001](https://attack.mitre.org/techniques/T1204/001/), [T1204.002](https://attack.mitre.org/techniques/T1204/002/), [T1218.010](https://attack.mitre.org/techniques/T1218/010/), [T1218.011](https://attack.mitre.org/techniques/T1218/011/) |
+| Persistance | Démarrage automatique au boot | Persistance via tâches planifiées et clés de registre | [T1547.001](https://attack.mitre.org/techniques/T1547/001/) |
+| C2 | Protocole applicatif | Communication avec le serveur C2 via HTTPS/TCP pour envoyer et recevoir des commandes | [T1071.001](https://attack.mitre.org/techniques/T1071/001/) |
+| Évasion de défense | Fichiers ou informations obfusqués | Utilisation de ZIPs ou ISO protégés par mot de passe pour éviter la détection | [T1140](https://attack.mitre.org/techniques/T1140/) |
+| Découverte | Scan du réseau | Scans ARP et découverte d’autres postes dans le réseau AD | [T1016](https://attack.mitre.org/techniques/T1016/) |
+
+
+Pour une analyse visuelle des TTPs associées à Qakbot :
 [MITRE ATT&CK](https://mitre-attack.github.io/attack-navigator//#layerURL=https%3A%2F%2Fattack.mitre.org%2Fsoftware%2FS0650%2FS0650-enterprise-layer.json)
+
 
 ---
 
-### 🛡️ Actions correctives recommandées <a name="actions-correctives-recommandees"></a>
-1️⃣ Containment (Confinement)  
+### 🛡️ Actions  <a name="actions"></a>
+1️⃣ Containment 
 - Isoler immédiatement le poste infecté (`10.0.0[.]149`) du réseau.  
 - Bloquer les communications sortantes vers les IP C2 identifiées (voir [IoCs](#-indicateurs de compromission-iocs)):
   
@@ -118,11 +126,11 @@ Pour une analyse détaillée des TTPs associées à Qakbot :
 - Réinitialiser les mots de passe AD de l’utilisateur compromis et des comptes administrateurs éventuellement affectés.  
 - Scanner tous les postes du LAN (`10.0.0[.]0/24`) avec un antivirus/EDR mis à jour pour détecter Qakbot.  
 
-3️⃣ Recovery (Récupération)  
+3️⃣ Recovery
 - Restaurer les fichiers critiques du DC depuis des sauvegardes fiables si nécessaire.  
 - Vérifier l’intégrité des services AD et de la réplication des contrôleurs de domaine.  
 
-4️⃣ Prévention / Durcissement  
+4️⃣ Prévention
 - Mettre à jour tous les OS/logiciels.
 - Déployer une solution EDR capable de détecter et bloquer les comportements Qakbot.
 - Former les utilisateurs sur les attaques par phishing, principale porte d’entrée de Qakbot.
