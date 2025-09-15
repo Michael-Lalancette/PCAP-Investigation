@@ -30,8 +30,9 @@
 4. ☣️ [Détails du Malware](#details-du-malware)
 5. 🕵️‍♂️ [MITRE ATT&CK Mapping](#mitre)
 6. 🛡️ [Actions correctives recommandées](#actions)
-7. 🔹 [Conclusion](#conclusion)
-8. 📝 [Méthodologie](#methodologie)
+7. 🔹 [Bilan](#bilan)
+8. 📌 [Takeaways](#takeaways)
+9. 📝 [Méthodologie](#methodologie)
 
 
 ---
@@ -103,7 +104,7 @@ Des indices suggèrent une **propagation** possible vers le contrôleur de domai
 | Exécution | Exécution par l’utilisateur / Proxy Execution | L’ouverture d’un fichier LNK déclenche l’exécution de la DLL Qakbot via `rundll32.exe` | [T1204.001](https://attack.mitre.org/techniques/T1204/001/), [T1204.002](https://attack.mitre.org/techniques/T1204/002/), [T1218.010](https://attack.mitre.org/techniques/T1218/010/), [T1218.011](https://attack.mitre.org/techniques/T1218/011/) |
 | Persistance | Démarrage automatique au boot | Persistance via tâches planifiées et clés de registre | [T1547.001](https://attack.mitre.org/techniques/T1547/001/) |
 | C2 | Protocole applicatif | Communication avec le serveur C2 via HTTPS/TCP pour envoyer et recevoir des commandes | [T1071.001](https://attack.mitre.org/techniques/T1071/001/) |
-| Évasion de défense | Fichiers ou informations obfusqués | Utilisation de ZIPs ou ISO protégés par mot de passe pour éviter la détection | [T1140](https://attack.mitre.org/techniques/T1140/) |
+| Évasion de défense | Fichiers ou informations obfusqués | Utilisation de ZIPs ou ISO protégés par mot de passe pour éviter la détection | [T1027](https://attack.mitre.org/techniques/T1027/) |
 | Découverte | Scan du réseau | Scans ARP et découverte d’autres postes dans le réseau AD | [T1016](https://attack.mitre.org/techniques/T1016/) |
 
 
@@ -124,7 +125,7 @@ Pour une analyse visuelle des TTPs associées à Qakbot :
 2️⃣ Eradication  
 - Supprimer toutes les DLLs malveillantes et fichiers `.cfg` transférés via SMB/SMB2.  
 - Réinitialiser les mots de passe AD de l’utilisateur compromis et des comptes administrateurs éventuellement affectés.  
-- Scanner tous les postes du LAN (`10.0.0[.]0/24`) avec un antivirus/EDR mis à jour pour détecter Qakbot.  
+- Scanner tous les postes du LAN (`10.0.0[.]0/24`) avec un antivirus/EDR à jour.  
 
 3️⃣ Recovery
 - Restaurer les fichiers critiques du DC depuis des sauvegardes fiables si nécessaire.  
@@ -139,18 +140,15 @@ Pour une analyse visuelle des TTPs associées à Qakbot :
 ---
 
 
-### 🔹 Conclusion <a name="conclusion"></a>
+### 🔹 Bilan <a name="bilan"></a>
 
-| 🔹 Élément | 📊 Impact / Observations |
-|------------|-------------------------|
-| Postes compromis | 1 hôte identifié (`10.0.0[.]149`) |
-| Serveurs touchés | Tentative de compromission DC (`10.0.0[.]6`) |
-| Activité malveillante | Téléchargement Qakbot, C2 HTTPS/TCP, VNC, spambot, ARP scanning, SMB lateral movement |
-| Risque pour le domaine | Élevé – propagation possible et contrôle AD potentiel |
+L’analyse a confirmé la compromission d’un poste utilisateur (`10.0.0[.]149`), avec une tentative d’attaque visant le contrôleur de domaine (`10.0.0[.]6`). L’activité malveillante observée inclut le téléchargement du malware Qakbot, des communications C2, du spam, du contrôle à distance (VNC) et des tentatives de mouvement latéral via SMB. Le risque pour le domaine est jugé **élevé**, avec une possible propagation et prise de contrôle du AD. Les mesures prioritaires consistent à isoler l’hôte compromis, vérifier l’intégrité du DC, bloquer les IoCs identifiés et renforcer la détection des menaces (phishing, C2) afin de limiter l’impact et prévenir une récidive.
 
-- L’infection par Qakbot a démontré une capacité à se propager dans l’AD.  
-- Les mesures de confinement, d’éradication et de prévention doivent être appliquées **immédiatement** pour limiter l’impact sur `WORK4US.ORG`.
+---
 
+### 📌 Takeaways <a name="takeaways"></a>  
+
+L’application pratique de l’analyse réseau avec Wireshark et l’investigation de l’infection Qakbot m’ont aidé à mieux cerner des concepts clés comme la communication C2, le mouvement latéral ou la persistance. Au-delà de la théorie, travailler directement sur les flux et les IoCs a rendu plus concrète ma compréhension des techniques d’attaque et des mesures défensives, renforçant ainsi mes compétences en cybersécurité.
 
 ---
 
